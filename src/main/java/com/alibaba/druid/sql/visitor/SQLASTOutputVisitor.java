@@ -2530,6 +2530,26 @@ public class SQLASTOutputVisitor extends SQLASTVisitorAdapter implements Paramet
     public boolean visit(SQLCreateTableStatement x) {
         printCreateTable(x, true);
 
+        Map<String, SQLObject> options = x.getTableOptions();
+        if (options.size() > 0) {
+            println();
+            print0(ucase ? "WITH (" : "with (");
+            int i = 0;
+            for (Map.Entry<String, SQLObject> option : x.getTableOptions().entrySet()) {
+                if (i > 0) {
+                    print0(", ");
+                }
+                String key = option.getKey();
+                print0(key);
+
+                print0(" = ");
+
+                option.getValue().accept(this);
+                ++i;
+            }
+            print(')');
+        }
+
         return false;
     }
 
@@ -6003,6 +6023,57 @@ public class SQLASTOutputVisitor extends SQLASTVisitorAdapter implements Paramet
         if ((!afterSemi) && x.getParent() instanceof OracleCreatePackageStatement) {
             print(';');
         }
+        return false;
+    }
+
+    public boolean visit(SQLExternalRecordFormat x) {
+        if (x.getDelimitedBy() != null) {
+            println();
+            print0(ucase ? "RECORDS DELIMITED BY " : "records delimited by ");
+            x.getDelimitedBy().accept(this);
+        }
+
+        if (x.getTerminatedBy() != null) {
+            println();
+            print0(ucase ? "FIELDS TERMINATED BY " : "fields terminated by ");
+            x.getTerminatedBy().accept(this);
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean visit(SQLArrayDataType x) {
+        print0(ucase ? "ARRAY<" : "array<");
+        x.getComponentType().accept(this);
+        print('>');
+        return false;
+    }
+
+    @Override
+    public boolean visit(SQLMapDataType x) {
+        print0(ucase ? "MAP<" : "map<");
+        x.getKeyType().accept(this);
+        print0(", ");
+        x.getValueType().accept(this);
+        print('>');
+        return false;
+    }
+
+    @Override
+    public boolean visit(SQLStructDataType x) {
+        print0(ucase ? "STRUCT<" : "struct<");
+        printAndAccept(x.getFields(), ", ");
+        print('>');
+        return false;
+    }
+
+    @Override
+    public boolean visit(SQLStructDataType.Field x) {
+        x.getName().accept(this);
+        print(':');
+        x.getDataType().accept(this);
+        print('>');
         return false;
     }
 }

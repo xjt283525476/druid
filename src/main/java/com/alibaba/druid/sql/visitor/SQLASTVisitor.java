@@ -799,4 +799,18 @@ public interface SQLASTVisitor {
 
     boolean visit(SQLDropTypeStatement x);
     void endVisit(SQLDropTypeStatement x);
+
+    boolean visit(SQLExternalRecordFormat x);
+    void endVisit(SQLExternalRecordFormat x);
+
+    boolean visit(SQLArrayDataType x);
+    void endVisit(SQLArrayDataType x);
+
+    boolean visit(SQLMapDataType x);
+    void endVisit(SQLMapDataType x);
+
+    boolean visit(SQLStructDataType x);
+    void endVisit(SQLStructDataType x);
+    boolean visit(SQLStructDataType.Field x);
+    void endVisit(SQLStructDataType.Field x);
 }

@@ -615,10 +615,15 @@ public final class FnvHash {
         long SORTED = fnv1a_64_lower("SORTED");
         long LIFECYCLE = fnv1a_64_lower("LIFECYCLE");
         long PARTITIONS = fnv1a_64_lower("PARTITIONS");
+        long ARRAY = fnv1a_64_lower("ARRAY");
+        long STRUCT = fnv1a_64_lower("STRUCT");
 
         long ROLLBACK = fnv1a_64_lower("ROLLBACK");
         long SAVEPOINT = fnv1a_64_lower("SAVEPOINT");
         long RELEASE = fnv1a_64_lower("RELEASE");
         long MERGE = fnv1a_64_lower("MERGE");
+        long INHERITS = fnv1a_64_lower("INHERITS");
+        long DELIMITED = fnv1a_64_lower("DELIMITED");
+        long TABLES = fnv1a_64_lower("TABLES");
     }
 }

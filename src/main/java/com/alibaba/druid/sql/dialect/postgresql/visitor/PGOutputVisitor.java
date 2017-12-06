@@ -1890,28 +1890,6 @@ public class PGOutputVisitor extends SQLASTOutputVisitor implements PGASTVisitor
     }
 
     @Override
-    public boolean visit(OracleCreateTableStatement.OracleExternalRecordFormat x) {
-        if (x.getDelimitedBy() != null) {
-            println();
-            print0(ucase ? "RECORDS DELIMITED BY " : "records delimited by ");
-            x.getDelimitedBy().accept(this);
-        }
-
-        if (x.getTerminatedBy() != null) {
-            println();
-            print0(ucase ? "FIELDS TERMINATED BY " : "fields terminated by ");
-            x.getTerminatedBy().accept(this);
-        }
-
-        return false;
-    }
-
-    @Override
-    public void endVisit(OracleCreateTableStatement.OracleExternalRecordFormat x) {
-
-    }
-
-    @Override
     public boolean visit(OracleCreateTableStatement.OIDIndex x) {
         print0(ucase ? "OIDINDEX" : "oidindex");
 
@@ -2275,6 +2253,7 @@ public class PGOutputVisitor extends SQLASTOutputVisitor implements PGASTVisitor
             println();
             x.getSelect().accept(this);
         }
+
         return false;
     }
 
@@ -2993,6 +2972,39 @@ public class PGOutputVisitor extends SQLASTOutputVisitor implements PGASTVisitor
         }
         println();
         print0(ucase ? "END IF" : "end if");
+        return false;
+    }
+
+    @Override
+    public boolean visit(SQLCreateIndexStatement x) {
+        print0(ucase ? "CREATE " : "create ");
+        if (x.getType() != null) {
+            print0(x.getType());
+            print(' ');
+        }
+
+        print0(ucase ? "INDEX " : "index ");
+
+        x.getName().accept(this);
+
+        if (x.getUsing() != null) {
+            print0(ucase ? " USING " : " using ");
+            ;
+            print0(x.getUsing());
+        }
+
+        print0(ucase ? " ON " : " on ");
+        x.getTable().accept(this);
+        print0(" (");
+        printAndAccept(x.getItems(), ", ");
+        print(')');
+
+        SQLExpr comment = x.getComment();
+        if (comment != null) {
+            print0(ucase ? " COMMENT " : " comment ");
+            comment.accept(this);
+        }
+
         return false;
     }
 }
